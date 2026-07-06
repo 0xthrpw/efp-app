@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+
+# Local env files must never reach an image — the local .env holds real RPC
+# keys, and dotenv/next would silently prefer baked-in values over platform
+# env. .env.production is deliberately NOT excluded: it carries the public
+# build-time config the image build needs.
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
