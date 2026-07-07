@@ -20,6 +20,31 @@ COPY package.json bun.lockb ./
 RUN bun install --frozen-lockfile
 
 COPY . .
+
+# Browser-exposed project IDs, injected as build args by the deploy platform
+# (hotbox passes every non-secret variable; only keys declared here reach the
+# build). Kept out of the committed .env.production so public-repo scrapers
+# don't get them. NEXT_PUBLIC_* values are inlined into the client bundle by
+# `next build` — changing any of them means a rebuild.
+ARG NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID
+ARG NEXT_PUBLIC_ENS_SUBGRAPH_API_KEY
+ARG NEXT_PUBLIC_MAINNET_ALCHEMY_ID
+ARG NEXT_PUBLIC_BASE_ALCHEMY_ID
+ARG NEXT_PUBLIC_OPTIMISM_ALCHEMY_ID
+ARG NEXT_PUBLIC_QUICKNODE_ID
+ARG NEXT_PUBLIC_THIRDWEB_CLIENT_ID
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ARG NEXT_PUBLIC_POSTHOG_KEY
+ENV NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=$NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID \
+    NEXT_PUBLIC_ENS_SUBGRAPH_API_KEY=$NEXT_PUBLIC_ENS_SUBGRAPH_API_KEY \
+    NEXT_PUBLIC_MAINNET_ALCHEMY_ID=$NEXT_PUBLIC_MAINNET_ALCHEMY_ID \
+    NEXT_PUBLIC_BASE_ALCHEMY_ID=$NEXT_PUBLIC_BASE_ALCHEMY_ID \
+    NEXT_PUBLIC_OPTIMISM_ALCHEMY_ID=$NEXT_PUBLIC_OPTIMISM_ALCHEMY_ID \
+    NEXT_PUBLIC_QUICKNODE_ID=$NEXT_PUBLIC_QUICKNODE_ID \
+    NEXT_PUBLIC_THIRDWEB_CLIENT_ID=$NEXT_PUBLIC_THIRDWEB_CLIENT_ID \
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY \
+    NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY
+
 # The build script sets NODE_ENV=production and the 4GB heap itself.
 # Sourcemap uploads (Sentry/PostHog) self-disable: their auth tokens are unset.
 RUN bun run build
