@@ -15,6 +15,10 @@ console.info(`\nBuilding with app version: ${APP_VERSION}\n`)
 
 /** @type {NextConfig} */
 const nextConfig = {
+  // Self-contained server bundle for Docker: the runtime image ships
+  // .next/standalone + .next/static + public and runs `node server.js`,
+  // no node_modules needed. Vercel ignores this setting.
+  output: 'standalone',
   cleanDistDir: true,
   trailingSlash: false,
   reactStrictMode: true,
