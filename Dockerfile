@@ -16,7 +16,10 @@ COPY --from=oven/bun:1 /usr/local/bin/bun /usr/local/bin/bun
 # puppeteer's postinstall download (~170MB we'd throw away).
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 
+# vendor/ holds the locally-built ethereum-identity-kit tarball (file: dep) —
+# it must exist before install, not just at the `COPY . .` layer.
 COPY package.json bun.lockb ./
+COPY vendor ./vendor
 RUN bun install --frozen-lockfile
 
 COPY . .
