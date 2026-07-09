@@ -15,6 +15,7 @@ import { createThirdwebClient, defineChain as thirdwebDefineChain } from 'thirdw
 import { inAppWalletConnector } from '@thirdweb-dev/wagmi-adapter'
 
 import { APP_DESCRIPTION, APP_NAME, APP_URL } from '#/lib/constants'
+import { rpcProviders } from '#/lib/constants/rpc-providers'
 
 const thirdwebClientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || '4e8c81182c3709ee441e30d776223354'
 const unicornFactoryAddress =
@@ -145,6 +146,11 @@ export const chains: [ChainWithDetails, ...ChainWithDetails[]] = [
   },
 ]
 
+// Deployment URL from rpcProviders first, free public endpoint as fallback —
+// deduped so an unset env var doesn't list the public endpoint twice.
+const rpcFallback = (chainId: number, publicUrl: string) =>
+  fallback([...new Set([rpcProviders[chainId], publicUrl])].map((url) => http(url, { batch: true })))
+
 const combinedConnectors = [unicornConnector, ...connectors, safe()]
 
 const config = createConfig({
@@ -155,37 +161,9 @@ const config = createConfig({
     storage: cookieStorage,
   }),
   transports: {
-    [mainnet.id]: fallback([
-      http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_MAINNET_ALCHEMY_ID}`, {
-        batch: true,
-      }),
-      http(`https://smart-cosmological-telescope.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_ID}`, {
-        batch: true,
-      }),
-      http('https://eth.llamarpc.com', {
-        batch: true,
-      }),
-    ]),
-    [optimism.id]: fallback([
-      http(`https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_OPTIMISM_ALCHEMY_ID}`, {
-        batch: true,
-      }),
-      http(`https://smart-cosmological-telescope.optimism.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_ID}`, {
-        batch: true,
-      }),
-      http(`https://mainnet.optimism.io`, {
-        batch: true,
-      }),
-    ]),
-    [base.id]: fallback([
-      http(`https://base-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_BASE_ALCHEMY_ID}`, {
-        batch: true,
-      }),
-      http(`https://smart-cosmological-telescope.base-mainnet.quiknode.pro/${process.env.NEXT_PUBLIC_QUICKNODE_ID}`, {
-        batch: true,
-      }),
-      http('https://mainnet.base.org/', { batch: true }),
-    ]),
+    [mainnet.id]: rpcFallback(mainnet.id, 'https://eth.llamarpc.com'),
+    [optimism.id]: rpcFallback(optimism.id, 'https://mainnet.optimism.io'),
+    [base.id]: rpcFallback(base.id, 'https://mainnet.base.org'),
   },
 })
 
