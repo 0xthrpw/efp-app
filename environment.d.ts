@@ -10,13 +10,10 @@ interface EnvironmentVariables {
   readonly NEXT_PUBLIC_AIRSTACK_API_KEY: string
   readonly NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: string
   readonly NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: string
-  readonly NEXT_PUBLIC_MAINNET_ALCHEMY_ID: string
-  readonly NEXT_PUBLIC_SEPOLIA_ALCHEMY_ID: string
-  readonly NEXT_PUBLIC_OPTIMISM_ALCHEMY_ID: string
-  readonly NEXT_PUBLIC_BASE_ALCHEMY_ID: string
-  readonly NEXT_PUBLIC_BASE_SEPOLIA_ALCHEMY_ID: string
-  readonly NEXT_PUBLIC_OPTIMISM_ALCHEMY_ID: string
-  readonly NEXT_PUBLIC_OP_SEPOLIA_ALCHEMY_ID: string
+  /* Full RPC URLs; unset chains fall back to free public endpoints */
+  readonly NEXT_PUBLIC_MAINNET_RPC_URL?: string
+  readonly NEXT_PUBLIC_OPTIMISM_RPC_URL?: string
+  readonly NEXT_PUBLIC_BASE_RPC_URL?: string
   readonly NEXT_PUBLIC_EFP_ACCOUNT_METADATA: string
   readonly NEXT_PUBLIC_EFP_LIST_REGISTRY: string
   readonly NEXT_PUBLIC_EFP_LIST_RECORDS: string
